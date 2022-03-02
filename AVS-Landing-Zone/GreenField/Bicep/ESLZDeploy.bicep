@@ -45,7 +45,7 @@ param JumpboxSku string = 'Standard_D2s_v3'
 @description('Should some storage be deployed to the ELZ')
 param DeployStorage bool = true
 
-@description('Sepcify the name of the Storage Account')
+@description('Specify the name of the Storage Account')
 param StorageName string
 
 @description('The subnet CIDR used for the Migration Subnet. Must be a /26 or greater within the VNetAddressSpace')
