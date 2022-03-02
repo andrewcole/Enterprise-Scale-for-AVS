@@ -134,7 +134,7 @@ module Migration 'Modules/Migration.bicep' = if (DeployMigrationSubnet) {
 module Storage 'Modules/Storage.bicep' = if (DeployStorage) {
   name: '${deploymentPrefix}-Storage'
   params: {
-    Name: StorageName
+    Name: '${StorageName}${uniqueString(deployment().name)}'
     ResourceGroup: NetworkResourceGroup
     Location: ELZLocation
   }

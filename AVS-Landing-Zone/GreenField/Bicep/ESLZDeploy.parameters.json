@@ -35,7 +35,7 @@
             ]
         },
         "StorageName": {
-            "value": "sbb-storage"
+            "value": "sbbstorage"
         },
         "JumpboxUsername": {
             "value": "avsjump"
