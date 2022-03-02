@@ -92,7 +92,7 @@ module VNetConnection 'Modules/VNetConnection.bicep' = {
     VNetPrefix: Prefix
     PrivateCloudName: AVSCore.outputs.PrivateCloudName
     PrivateCloudResourceGroup: AVSCore.outputs.PrivateCloudResourceGroupName
-    Location: AVSLocation
+    Location: ELZLocation
   }
 }
 
