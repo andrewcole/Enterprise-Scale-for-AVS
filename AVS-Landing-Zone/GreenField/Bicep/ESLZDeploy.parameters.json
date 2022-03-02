@@ -34,6 +34,9 @@
                 "francois.legrange@microsoft.com"
             ]
         },
+        "StorageName": {
+            "value": "sbb-storage"
+        },
         "JumpboxUsername": {
             "value": "avsjump"
         },
