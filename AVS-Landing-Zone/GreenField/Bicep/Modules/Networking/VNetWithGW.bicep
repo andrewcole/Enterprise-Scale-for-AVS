@@ -1,30 +1,16 @@
 param Location string = resourceGroup().location
 param Prefix string
-param VNetExists bool
-param VNetAddressSpace string
 param VNetGatewaySubnet string
 param GatewaySku string = 'Standard'
+param VNetName string
 
 var GatewayName = '${Prefix}-GW'
-var VNetName = '${Prefix}-VNet'
 
-resource VNet 'Microsoft.Network/virtualNetworks@2021-02-01' = if (!VNetExists) {
-  name: VNetName
-  location: Location
-  properties: {
-    addressSpace: {
-      addressPrefixes: [
-        VNetAddressSpace
-      ]
-    }
-  }
-}
-
-resource ExistingVNet 'Microsoft.Network/virtualNetworks@2021-02-01' existing = if (VNetExists) {
+resource VNet 'Microsoft.Network/virtualNetworks@2021-02-01' existing = {
   name: VNetName
 }
 
-resource GatewaySubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' = if (!VNetExists) {
+resource GatewaySubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' = {
   name: 'GatewaySubnet'
   parent: VNet
   properties: {
@@ -32,7 +18,7 @@ resource GatewaySubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' = 
   }
 }
 
-resource GatewayPIP 'Microsoft.Network/publicIPAddresses@2021-02-01' = if (!VNetExists) {
+resource GatewayPIP 'Microsoft.Network/publicIPAddresses@2021-02-01' = {
   name: '${GatewayName}-PIP'
   location: Location
   properties: {
@@ -43,12 +29,7 @@ resource GatewayPIP 'Microsoft.Network/publicIPAddresses@2021-02-01' = if (!VNet
     tier: 'Regional'
   }
 }
-
-resource ExistingGateway 'Microsoft.Network/virtualNetworkGateways@2021-02-01' existing = if (VNetExists) {
-  name: GatewayName
-}
-
-resource Gateway 'Microsoft.Network/virtualNetworkGateways@2021-02-01' = if (!VNetExists) {
+resource Gateway 'Microsoft.Network/virtualNetworkGateways@2021-02-01' = {
   name: GatewayName
   location: Location
   properties: {
@@ -74,6 +55,6 @@ resource Gateway 'Microsoft.Network/virtualNetworkGateways@2021-02-01' = if (!VN
   }
 }
 
-output VNetName string = VNetExists ? ExistingVNet.name : VNet.name
-output GatewayName string = VNetExists ? ExistingGateway.name : Gateway.name
-output VNetResourceId string = VNetExists ? ExistingVNet.id : VNet.id
+output VNetName string = VNet.name
+output GatewayName string = Gateway.name
+output VNetResourceId string = VNet.id

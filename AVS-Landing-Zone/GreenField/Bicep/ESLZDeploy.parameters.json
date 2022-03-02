@@ -2,43 +2,43 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "Location": {
-            "value": "SoutheastAsia"
+        "ELZLocation": {
+            "value": "AustraliaCentral"
+        },
+        "AVSLocation": {
+            "value": "NorthEurope"
         },
         "Prefix": {
-            "value": "ESLZ"
+            "value": "SBB"
         },
         "PrivateCloudAddressSpace": {
-            "value": "10.0.0.0/22"
+            "value": "10.0.0.0/22" // 10.0.0.0 - 10.0.3.255
         },
-        "VNetAddressSpace": {
-            "value": "10.1.0.0/16"
+        "JumpboxSubnet": {
+            "value": "10.5.1.0/26" // 10.5.1.0 - 10.5.1.127
+        },
+        "MigrationSubnet": {
+            "value": "10.5.1.64/26" // 10.5.1.64 - 10.5.1.127
         },
         "VNetGatewaySubnet": {
-            "value": "10.1.0.0/24"
+            "value": "10.5.1.128/26" // 10.5.1.128 - 10.5.1.191
+        },
+        "VNetName": {
+            "value": "vnet-sbb"
+        },
+        "NetworkResourceGroup": {
+            "value": "rg-sbb"
         },
         "AlertEmails": {
             "value": [
-                "example@microsoft.com"
+                "francois.legrange@microsoft.com"
             ]
-        },
-        "DeployJumpbox": {
-            "value": true
         },
         "JumpboxUsername": {
             "value": "avsjump"
         },
         "JumpboxPassword": {
             "value": "ChangeM3!"
-        },
-        "JumpboxSubnet": {
-            "value": "10.1.1.0/25"
-        },
-        "BastionSubnet": {
-            "value": "10.1.1.128/25"
-        },
-        "VNetExists": {
-            "value": false
         }
     }
 }

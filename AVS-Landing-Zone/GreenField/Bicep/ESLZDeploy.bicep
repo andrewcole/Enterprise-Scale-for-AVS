@@ -1,38 +1,55 @@
 targetScope = 'subscription'
 
+@description('The region the Enterpise Landing Zone and associated resources will be deployed to')
+param ELZLocation string = 'AustraliaCentral'
+
 @description('The region the AVS Private Cloud & associated resources will be deployed to')
-param Location string
+param AVSLocation string = 'AustraliaEast'
+
 @description('The prefix to use on resources inside this template')
 @minLength(1)
 @maxLength(20)
-param Prefix string = 'AVS'
+param Prefix string = 'SBB'
 
 @description('The address space used for the AVS Private Cloud management networks. Must be a non-overlapping /22')
-param PrivateCloudAddressSpace string
+param PrivateCloudAddressSpace string = '10.0.0.0/22'
 
-@description('Set this to true if you are redeploying, and the VNet already exists')
-param VNetExists bool = false
-@description('The address space used for the VNet attached to AVS. Must be non-overlapping with existing networks')
-param VNetAddressSpace string
+@description('Specify the name of the VNet')
+param VNetName string
+
+@description('Specify the name of the Network Resource Group')
+param NetworkResourceGroup string
+
 @description('The subnet CIDR used for the Gateway Subnet. Must be a /24 or greater within the VNetAddressSpace')
-param VNetGatewaySubnet string
+param VNetGatewaySubnet string = '10.1.1.128/26'
 
 @description('Email addresses to be added to the alerting action group. Use the format ["name1@domain.com","name2@domain.com"].')
-param AlertEmails array = []
-@description('Should a Jumpbox & Bastion be deployed to access the Private Cloud')
+param AlertEmails array = [
+  'francois.legrange@microsoft.com'
+]
+@description('Should a Jumpbox deployed to access the Private Cloud')
+param DeployJumpbox bool = true
+@description('Should a Migration subnet be deployed')
+param DeployMigrationSubnet bool = true
 
-param DeployJumpbox bool = false
 @description('Username for the Jumpbox VM')
 param JumpboxUsername string = 'avsjump'
 @secure()
 @description('Password for the Jumpbox VM, can be changed later')
-param JumpboxPassword string = ''
+param JumpboxPassword string
 @description('The subnet CIDR used for the Jumpbox VM Subnet. Must be a /26 or greater within the VNetAddressSpace')
-param JumpboxSubnet string = ''
+param JumpboxSubnet string = '10.1.1.0/26'
 @description('The sku to use for the Jumpbox VM, must have quota for this within the target region')
 param JumpboxSku string = 'Standard_D2s_v3'
-@description('The subnet CIDR used for the Bastion Subnet. Must be a /26 or greater within the VNetAddressSpace')
-param BastionSubnet string = ''
+
+@description('Should some storage be deployed to the ELZ')
+param DeployStorage bool = true
+
+@description('Sepcify the name of the Storage Account')
+param StorageName string
+
+@description('The subnet CIDR used for the Migration Subnet. Must be a /26 or greater within the VNetAddressSpace')
+param MigrationSubnet string = '10.1.1.64/26'
 
 @description('Should HCX be deployed as part of the deployment')
 param DeployHCX bool = true
@@ -45,18 +62,14 @@ param SRMLicenseKey string = ''
 @description('Number of vSphere Replication Servers to be created if SRM is deployed')
 param VRServerCount int = 1
 
-@description('Opt-out of deployment telemetry')
-param TelemetryOptOut bool = false
-
-var deploymentPrefix = 'AVS-${uniqueString(deployment().name, deployment().location)}'
+var deploymentPrefix = 'AVS-${uniqueString(deployment().name)}'
 
 module AVSCore 'Modules/AVSCore.bicep' = {
   name: '${deploymentPrefix}-AVS'
   params: {
     Prefix: Prefix
-    Location: Location
+    Location: AVSLocation
     PrivateCloudAddressSpace: PrivateCloudAddressSpace
-    TelemetryOptOut: TelemetryOptOut
   }
 }
 
@@ -64,10 +77,10 @@ module Networking 'Modules/Networking.bicep' = {
   name: '${deploymentPrefix}-Network'
   params: {
     Prefix: Prefix
-    Location: Location
-    VNetExists: VNetExists
-    VNetAddressSpace: VNetAddressSpace
+    Location: ELZLocation
     VNetGatewaySubnet: VNetGatewaySubnet
+    VNetName: VNetName
+    NetworkResourceGroup: NetworkResourceGroup
   }
 }
 
@@ -75,10 +88,11 @@ module VNetConnection 'Modules/VNetConnection.bicep' = {
   name: '${deploymentPrefix}-VNet'
   params: {
     GatewayName: Networking.outputs.GatewayName
-    NetworkResourceGroup: Networking.outputs.NetworkResourceGroup
+    NetworkResourceGroup: NetworkResourceGroup
     VNetPrefix: Prefix
     PrivateCloudName: AVSCore.outputs.PrivateCloudName
     PrivateCloudResourceGroup: AVSCore.outputs.PrivateCloudResourceGroupName
+    Location: AVSLocation
   }
 }
 
@@ -98,14 +112,31 @@ module Jumpbox 'Modules/JumpBox.bicep' = if (DeployJumpbox) {
   name: '${deploymentPrefix}-Jumpbox'
   params: {
     Prefix: Prefix
-    Location: Location
+    Location: ELZLocation
     Username: JumpboxUsername
     Password: JumpboxPassword
-    VNetName: Networking.outputs.VNetName
-    VNetResourceGroup: Networking.outputs.NetworkResourceGroup
-    BastionSubnet: BastionSubnet
+    VNetName: VNetName
+    VNetResourceGroup: NetworkResourceGroup
     JumpboxSubnet: JumpboxSubnet
     JumpboxSku: JumpboxSku
+  }
+}
+
+module Migration 'Modules/Migration.bicep' = if (DeployMigrationSubnet) {
+  name: '${deploymentPrefix}-Migration'
+  params: {
+    VNetName: VNetName
+    VNetResourceGroup: NetworkResourceGroup
+    MigrationSubnet: MigrationSubnet
+  }
+}
+
+module Storage 'Modules/Storage.bicep' = if (DeployStorage) {
+  name: '${deploymentPrefix}-Storage'
+  params: {
+    Name: StorageName
+    ResourceGroup: NetworkResourceGroup
+    Location: ELZLocation
   }
 }
 
@@ -114,7 +145,7 @@ module OperationalMonitoring 'Modules/Monitoring.bicep' = {
   params: {
     AlertEmails: AlertEmails
     Prefix: Prefix
-    PrimaryLocation: Location
+    PrimaryLocation: AVSLocation
     PrimaryPrivateCloudName: AVSCore.outputs.PrivateCloudName
     PrimaryPrivateCloudResourceId: AVSCore.outputs.PrivateCloudResourceId
     JumpboxResourceId: DeployJumpbox ? Jumpbox.outputs.JumpboxResourceId : ''
@@ -122,3 +153,4 @@ module OperationalMonitoring 'Modules/Monitoring.bicep' = {
     ExRConnectionResourceId: VNetConnection.outputs.ExRConnectionResourceId
   }
 }
+
