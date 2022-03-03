@@ -1,8 +1,17 @@
 targetScope = 'subscription'
 
+@allowed([
+  'AustraliaCentral'
+  'AustraliaCentral2'
+])
 @description('The region the Enterpise Landing Zone and associated resources will be deployed to')
 param ELZLocation string = 'AustraliaCentral'
 
+@allowed([
+  'AustraliaEast'
+  'AustraliaSouthEast'
+  'NorthEurope'
+])
 @description('The region the AVS Private Cloud & associated resources will be deployed to')
 param AVSLocation string = 'AustraliaEast'
 
@@ -27,6 +36,7 @@ param VNetGatewaySubnet string = '10.1.1.128/26'
 param AlertEmails array = [
   'francois.legrange@microsoft.com'
 ]
+
 @description('Should a Jumpbox deployed to access the Private Cloud')
 param DeployJumpbox bool = true
 @description('Should a Migration subnet be deployed')
