@@ -28,30 +28,26 @@ resource JumpBox 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' = {
               access: 'Allow'
               priority: 100
               direction: 'Inbound'
-    
             }
           }
-            {
-              name: 'AllowSMB'
-              properties: {
-                description: 'This will allow SMB traffic into the subnet'
-                protocol: 'Tcp'
-                sourcePortRange: '*'
-                destinationPortRange: '139,445'
-                sourceAddressPrefix: '*'
-                destinationAddressPrefix: '*'
-                access: 'Allow'
-                priority: 102
-                direction: 'Inbound'
-      
-              }
+          {
+            name: 'AllowSMB'
+            properties: {
+              description: 'This will allow SMB traffic into the subnet'
+              protocol: 'Tcp'
+              sourcePortRange: '*'
+              destinationPortRange: '139,445'
+              sourceAddressPrefix: '*'
+              destinationAddressPrefix: '*'
+              access: 'Allow'
+              priority: 102
+              direction: 'Inbound'
             }
+          }
         ]
       }
     }
   }
-
 }
-
 
 output JumpBoxSubnetId string = JumpBox.id
