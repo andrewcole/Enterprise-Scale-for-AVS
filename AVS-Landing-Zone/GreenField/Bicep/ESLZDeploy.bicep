@@ -59,6 +59,8 @@ param DeploySRM bool = false
 param SRMLicenseKey string = ''
 @minValue(1)
 @maxValue(10)
+@description('Number of vSphere ESXi hosts to be created')
+param ManagementClusterSize int = 3
 @description('Number of vSphere Replication Servers to be created if SRM is deployed')
 param VRServerCount int = 1
 
@@ -70,6 +72,7 @@ module AVSCore 'Modules/AVSCore.bicep' = {
     Prefix: Prefix
     Location: AVSLocation
     PrivateCloudAddressSpace: PrivateCloudAddressSpace
+    ManagementClusterSize: ManagementClusterSize
   }
 }
 

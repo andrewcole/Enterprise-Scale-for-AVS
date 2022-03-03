@@ -1,6 +1,6 @@
 param Prefix string
 param NetworkBlock string
-param ManagementClusterSize int = 3
+param ManagementClusterSize int
 param Location string = resourceGroup().location
 
 resource PrivateCloud 'Microsoft.AVS/privateClouds@2021-06-01' = {
@@ -14,6 +14,7 @@ resource PrivateCloud 'Microsoft.AVS/privateClouds@2021-06-01' = {
     managementCluster: {
       clusterSize: ManagementClusterSize
     }
+    internet: 'Disabled'
   }
 }
 

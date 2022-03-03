@@ -42,6 +42,9 @@
         },
         "JumpboxPassword": {
             "value": "ChangeM3!"
+        },
+        "ManagementClusterSize":{
+            "value": 4
         }
     }
 }
