@@ -57,10 +57,13 @@ param DeployHCX bool = true
 param DeploySRM bool = false
 @description('License key to be used if SRM is deployed')
 param SRMLicenseKey string = ''
-@minValue(1)
-@maxValue(10)
+@minValue(3)
+@maxValue(12)
 @description('Number of vSphere ESXi hosts to be created')
 param ManagementClusterSize int = 3
+
+@minValue(1)
+@maxValue(10)
 @description('Number of vSphere Replication Servers to be created if SRM is deployed')
 param VRServerCount int = 1
 
