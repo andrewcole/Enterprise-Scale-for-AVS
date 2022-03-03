@@ -17,7 +17,9 @@ resource NetworkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2020-11-0
           description: 'This will allow RDP traffic into the subnet'
           protocol: 'Tcp'
           sourcePortRange: '*'
-          destinationPortRange: '3389'
+          destinationPortRanges: [
+            '3389'
+          ]
           sourceAddressPrefix: '*'
           destinationAddressPrefix: '*'
           access: 'Allow'
@@ -31,7 +33,10 @@ resource NetworkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2020-11-0
           description: 'This will allow SMB traffic into the subnet'
           protocol: 'Tcp'
           sourcePortRange: '*'
-          destinationPortRange: '139,445'
+          destinationPortRanges: [
+            '139'
+            '445'
+          ]
           sourceAddressPrefix: '*'
           destinationAddressPrefix: '*'
           access: 'Allow'
