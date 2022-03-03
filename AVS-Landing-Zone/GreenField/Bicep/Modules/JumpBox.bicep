@@ -17,6 +17,7 @@ module Subnet 'JumpBox/JumpBoxSubnet.bicep' = {
   params:{
     VNetName: VNetName
     JumpboxSubnet: JumpboxSubnet
+    Location: Location
   }
 }
 
