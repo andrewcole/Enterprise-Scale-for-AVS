@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1272.37030",
-      "templateHash": "1616706499836503187"
+      "templateHash": "2304099569744039455"
     }
   },
   "parameters": {
@@ -149,14 +149,21 @@
         "description": "License key to be used if SRM is deployed"
       }
     },
+    "ManagementClusterSize": {
+      "type": "int",
+      "defaultValue": 3,
+      "metadata": {
+        "description": "Number of vSphere ESXi hosts to be created"
+      },
+      "maxValue": 10,
+      "minValue": 1
+    },
     "VRServerCount": {
       "type": "int",
       "defaultValue": 1,
       "metadata": {
         "description": "Number of vSphere Replication Servers to be created if SRM is deployed"
-      },
-      "maxValue": 10,
-      "minValue": 1
+      }
     }
   },
   "variables": {
@@ -182,6 +189,9 @@
           },
           "PrivateCloudAddressSpace": {
             "value": "[parameters('PrivateCloudAddressSpace')]"
+          },
+          "ManagementClusterSize": {
+            "value": "[parameters('ManagementClusterSize')]"
           }
         },
         "template": {
@@ -191,7 +201,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1272.37030",
-              "templateHash": "9962940669697566546"
+              "templateHash": "12496491217868060056"
             }
           },
           "parameters": {
@@ -203,6 +213,9 @@
             },
             "PrivateCloudAddressSpace": {
               "type": "string"
+            },
+            "ManagementClusterSize": {
+              "type": "int"
             }
           },
           "resources": [
@@ -231,6 +244,9 @@
                   },
                   "NetworkBlock": {
                     "value": "[parameters('PrivateCloudAddressSpace')]"
+                  },
+                  "ManagementClusterSize": {
+                    "value": "[parameters('ManagementClusterSize')]"
                   }
                 },
                 "template": {
@@ -240,7 +256,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.4.1272.37030",
-                      "templateHash": "12884746985841735540"
+                      "templateHash": "2224239744318720774"
                     }
                   },
                   "parameters": {
@@ -251,8 +267,7 @@
                       "type": "string"
                     },
                     "ManagementClusterSize": {
-                      "type": "int",
-                      "defaultValue": 3
+                      "type": "int"
                     },
                     "Location": {
                       "type": "string",
@@ -272,7 +287,8 @@
                         "networkBlock": "[parameters('NetworkBlock')]",
                         "managementCluster": {
                           "clusterSize": "[parameters('ManagementClusterSize')]"
-                        }
+                        },
+                        "internet": "Disabled"
                       }
                     }
                   ],
@@ -537,7 +553,7 @@
             "value": "[reference(subscriptionResourceId('Microsoft.Resources/deployments', format('{0}-AVS', variables('deploymentPrefix')))).outputs.PrivateCloudResourceGroupName.value]"
           },
           "Location": {
-            "value": "[parameters('AVSLocation')]"
+            "value": "[parameters('ELZLocation')]"
           }
         },
         "template": {
@@ -1321,7 +1337,7 @@
         "mode": "Incremental",
         "parameters": {
           "Name": {
-            "value": "[parameters('StorageName')]"
+            "value": "[format('{0}{1}', parameters('StorageName'), uniqueString(deployment().name))]"
           },
           "ResourceGroup": {
             "value": "[parameters('NetworkResourceGroup')]"
