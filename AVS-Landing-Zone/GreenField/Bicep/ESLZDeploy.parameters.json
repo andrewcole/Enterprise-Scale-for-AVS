@@ -44,7 +44,10 @@
             "value": "ChangeM3!"
         },
         "ManagementClusterSize":{
-            "value": 4
+            "value": 3
+        },
+        "PublicIP":{
+            "value": true
         }
     }
 }

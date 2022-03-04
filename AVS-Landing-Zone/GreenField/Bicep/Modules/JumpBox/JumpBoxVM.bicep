@@ -6,9 +6,19 @@ param Username string
 param Password string
 param VMSize string
 param OSVersion string = '2019-Datacenter-smalldisk'
+param PublicIP bool
 
 var Name = '${Prefix}-jumpbox'
 var Hostname = 'avsjumpbox'
+
+resource PublicIPAddress 'Microsoft.Network/publicIPAddresses@2019-11-01' = if (PublicIP) {
+  name: Name
+  location: Location
+  properties: {
+    publicIPAllocationMethod: 'Dynamic'
+  }
+}
+
 
 resource Nic 'Microsoft.Network/networkInterfaces@2021-02-01' = {
   name: Name
@@ -18,6 +28,9 @@ resource Nic 'Microsoft.Network/networkInterfaces@2021-02-01' = {
       {
         name: 'ipconfig1'
         properties: {
+          publicIPAddress: PublicIP ? {
+            id: PublicIPAddress.id
+          } : {}
           privateIPAllocationMethod: 'Dynamic'
           subnet: {
             id: SubnetId

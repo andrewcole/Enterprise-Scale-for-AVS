@@ -39,6 +39,10 @@ param AlertEmails array = [
 
 @description('Should a Jumpbox deployed to access the Private Cloud')
 param DeployJumpbox bool = true
+
+@description('Should a Public IP be assigned to the Jumpbox')
+param PublicIP bool = false
+
 @description('Should a Migration subnet be deployed')
 param DeployMigrationSubnet bool = true
 
@@ -135,6 +139,7 @@ module Jumpbox 'Modules/JumpBox.bicep' = if (DeployJumpbox) {
     VNetResourceGroup: NetworkResourceGroup
     JumpboxSubnet: JumpboxSubnet
     JumpboxSku: JumpboxSku
+    PublicIP: PublicIP
   }
 }
 
