@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1272.37030",
-      "templateHash": "2896760408440050929"
+      "templateHash": "6787838192337691081"
     }
   },
   "parameters": {
@@ -998,7 +998,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1272.37030",
-              "templateHash": "13707958717367544926"
+              "templateHash": "2121869391280049413"
             }
           },
           "parameters": {
@@ -1056,6 +1056,9 @@
                   },
                   "Location": {
                     "value": "[parameters('Location')]"
+                  },
+                  "Prefix": {
+                    "value": "[parameters('Prefix')]"
                   }
                 },
                 "template": {
@@ -1065,11 +1068,14 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.4.1272.37030",
-                      "templateHash": "6874559211797718452"
+                      "templateHash": "10607862623737220148"
                     }
                   },
                   "parameters": {
                     "VNetName": {
+                      "type": "string"
+                    },
+                    "Prefix": {
                       "type": "string"
                     },
                     "JumpboxSubnet": {
@@ -1079,11 +1085,14 @@
                       "type": "string"
                     }
                   },
+                  "variables": {
+                    "Name": "[format('{0}-jumpbox', parameters('Prefix'))]"
+                  },
                   "resources": [
                     {
                       "type": "Microsoft.Network/networkSecurityGroups",
                       "apiVersion": "2020-11-01",
-                      "name": "name",
+                      "name": "[variables('Name')]",
                       "location": "[parameters('Location')]",
                       "properties": {
                         "securityRules": [
@@ -1113,11 +1122,11 @@
                       "properties": {
                         "addressPrefix": "[parameters('JumpboxSubnet')]",
                         "networkSecurityGroup": {
-                          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'name')]"
+                          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('Name'))]"
                         }
                       },
                       "dependsOn": [
-                        "[resourceId('Microsoft.Network/networkSecurityGroups', 'name')]"
+                        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('Name'))]"
                       ]
                     }
                   ],

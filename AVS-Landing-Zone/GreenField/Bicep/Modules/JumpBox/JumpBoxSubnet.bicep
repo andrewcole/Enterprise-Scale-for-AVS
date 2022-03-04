@@ -1,13 +1,16 @@
 param VNetName string
+param Prefix string
 param JumpboxSubnet string
 param Location string
+
+var Name = '${Prefix}-jumpbox'
 
 resource VNet 'Microsoft.Network/virtualNetworks@2021-02-01' existing = {
   name: VNetName
 }
 
 resource NetworkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2020-11-01' = {
-  name: 'name'
+  name: Name
   location: Location
   properties: {
     securityRules: [
@@ -32,7 +35,7 @@ resource NetworkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2020-11-0
   }
 }
 
-resource JumpBox 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' = {
+resource Subnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' = {
   name: 'JumpBox'
   parent: VNet
   properties: {
@@ -43,4 +46,4 @@ resource JumpBox 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' = {
   }
 }
 
-output JumpBoxSubnetId string = JumpBox.id
+output JumpBoxSubnetId string = Subnet.id
