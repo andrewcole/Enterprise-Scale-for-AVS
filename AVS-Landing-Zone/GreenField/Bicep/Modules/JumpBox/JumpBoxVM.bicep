@@ -30,7 +30,7 @@ resource Nic 'Microsoft.Network/networkInterfaces@2021-02-01' = {
         properties: {
           publicIPAddress: PublicIP ? {
             id: PublicIPAddress.id
-          } : {}
+          } : null
           privateIPAllocationMethod: 'Dynamic'
           subnet: {
             id: SubnetId
