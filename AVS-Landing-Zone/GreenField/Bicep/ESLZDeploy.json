@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1272.37030",
-      "templateHash": "2304099569744039455"
+      "templateHash": "15667121606496632005"
     }
   },
   "parameters": {
@@ -14,14 +14,23 @@
       "defaultValue": "AustraliaCentral",
       "metadata": {
         "description": "The region the Enterpise Landing Zone and associated resources will be deployed to"
-      }
+      },
+      "allowedValues": [
+        "AustraliaCentral",
+        "AustraliaCentral2"
+      ]
     },
     "AVSLocation": {
       "type": "string",
       "defaultValue": "AustraliaEast",
       "metadata": {
         "description": "The region the AVS Private Cloud & associated resources will be deployed to"
-      }
+      },
+      "allowedValues": [
+        "AustraliaEast",
+        "AustraliaSouthEast",
+        "NorthEurope"
+      ]
     },
     "Prefix": {
       "type": "string",
@@ -155,15 +164,17 @@
       "metadata": {
         "description": "Number of vSphere ESXi hosts to be created"
       },
-      "maxValue": 10,
-      "minValue": 1
+      "maxValue": 12,
+      "minValue": 3
     },
     "VRServerCount": {
       "type": "int",
       "defaultValue": 1,
       "metadata": {
         "description": "Number of vSphere Replication Servers to be created if SRM is deployed"
-      }
+      },
+      "maxValue": 10,
+      "minValue": 1
     }
   },
   "variables": {
@@ -977,7 +988,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1272.37030",
-              "templateHash": "7119052574059936295"
+              "templateHash": "2597125158063221818"
             }
           },
           "parameters": {
@@ -1029,6 +1040,9 @@
                   },
                   "JumpboxSubnet": {
                     "value": "[parameters('JumpboxSubnet')]"
+                  },
+                  "Location": {
+                    "value": "[parameters('Location')]"
                   }
                 },
                 "template": {
@@ -1038,7 +1052,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.4.1272.37030",
-                      "templateHash": "17843406056519590869"
+                      "templateHash": "13892968644763730456"
                     }
                   },
                   "parameters": {
@@ -1046,6 +1060,9 @@
                       "type": "string"
                     },
                     "JumpboxSubnet": {
+                      "type": "string"
+                    },
+                    "Location": {
                       "type": "string"
                     }
                   },
@@ -1055,7 +1072,43 @@
                       "apiVersion": "2021-02-01",
                       "name": "[format('{0}/{1}', parameters('VNetName'), 'JumpBox')]",
                       "properties": {
-                        "addressPrefix": "[parameters('JumpboxSubnet')]"
+                        "addressPrefix": "[parameters('JumpboxSubnet')]",
+                        "networkSecurityGroup": {
+                          "id": "name",
+                          "location": "[parameters('Location')]",
+                          "properties": {
+                            "securityRules": [
+                              {
+                                "name": "AllowRDP",
+                                "properties": {
+                                  "description": "This will allow RDP traffic into the subnet",
+                                  "protocol": "Tcp",
+                                  "sourcePortRange": "*",
+                                  "destinationPortRange": "3389",
+                                  "sourceAddressPrefix": "*",
+                                  "destinationAddressPrefix": "*",
+                                  "access": "Allow",
+                                  "priority": 100,
+                                  "direction": "Inbound"
+                                }
+                              },
+                              {
+                                "name": "AllowSMB",
+                                "properties": {
+                                  "description": "This will allow SMB traffic into the subnet",
+                                  "protocol": "Tcp",
+                                  "sourcePortRange": "*",
+                                  "destinationPortRange": "139,445",
+                                  "sourceAddressPrefix": "*",
+                                  "destinationAddressPrefix": "*",
+                                  "access": "Allow",
+                                  "priority": 102,
+                                  "direction": "Inbound"
+                                }
+                              }
+                            ]
+                          }
+                        }
                       }
                     }
                   ],

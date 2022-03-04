@@ -1,8 +1,17 @@
 targetScope = 'subscription'
 
+@allowed([
+  'AustraliaCentral'
+  'AustraliaCentral2'
+])
 @description('The region the Enterpise Landing Zone and associated resources will be deployed to')
 param ELZLocation string = 'AustraliaCentral'
 
+@allowed([
+  'AustraliaEast'
+  'AustraliaSouthEast'
+  'NorthEurope'
+])
 @description('The region the AVS Private Cloud & associated resources will be deployed to')
 param AVSLocation string = 'AustraliaEast'
 
@@ -27,6 +36,7 @@ param VNetGatewaySubnet string = '10.1.1.128/26'
 param AlertEmails array = [
   'francois.legrange@microsoft.com'
 ]
+
 @description('Should a Jumpbox deployed to access the Private Cloud')
 param DeployJumpbox bool = true
 @description('Should a Migration subnet be deployed')
@@ -57,10 +67,13 @@ param DeployHCX bool = true
 param DeploySRM bool = false
 @description('License key to be used if SRM is deployed')
 param SRMLicenseKey string = ''
-@minValue(1)
-@maxValue(10)
+@minValue(3)
+@maxValue(12)
 @description('Number of vSphere ESXi hosts to be created')
 param ManagementClusterSize int = 3
+
+@minValue(1)
+@maxValue(10)
 @description('Number of vSphere Replication Servers to be created if SRM is deployed')
 param VRServerCount int = 1
 
