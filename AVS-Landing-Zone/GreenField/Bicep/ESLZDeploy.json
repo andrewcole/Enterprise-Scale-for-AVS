@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1272.37030",
-      "templateHash": "6787838192337691081"
+      "templateHash": "1412161719477759798"
     }
   },
   "parameters": {
@@ -185,7 +185,7 @@
     }
   },
   "variables": {
-    "deploymentPrefix": "[format('AVS-{0}', uniqueString(deployment().name))]"
+    "deploymentPrefix": "[format('AVS-{0}', uniqueString(parameters('Prefix')))]"
   },
   "resources": [
     {
@@ -998,7 +998,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1272.37030",
-              "templateHash": "2121869391280049413"
+              "templateHash": "3788770757358211119"
             }
           },
           "parameters": {
@@ -1179,7 +1179,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.4.1272.37030",
-                      "templateHash": "7384519999479240388"
+                      "templateHash": "12281212470361170529"
                     }
                   },
                   "parameters": {
@@ -1235,7 +1235,7 @@
                           {
                             "name": "ipconfig1",
                             "properties": {
-                              "publicIPAddress": "[if(parameters('PublicIP'), createObject('id', resourceId('Microsoft.Network/publicIPAddresses', variables('Name'))), createObject())]",
+                              "publicIPAddress": "[if(parameters('PublicIP'), createObject('id', resourceId('Microsoft.Network/publicIPAddresses', variables('Name'))), null())]",
                               "privateIPAllocationMethod": "Dynamic",
                               "subnet": {
                                 "id": "[parameters('SubnetId')]"

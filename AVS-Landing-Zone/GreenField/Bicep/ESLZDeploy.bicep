@@ -81,7 +81,7 @@ param ManagementClusterSize int = 3
 @description('Number of vSphere Replication Servers to be created if SRM is deployed')
 param VRServerCount int = 1
 
-var deploymentPrefix = 'AVS-${uniqueString(deployment().name)}'
+var deploymentPrefix = 'AVS-${uniqueString(Prefix)}'
 
 module AVSCore 'Modules/AVSCore.bicep' = {
   name: '${deploymentPrefix}-AVS'
