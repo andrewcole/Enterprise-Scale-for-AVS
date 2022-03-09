@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1272.37030",
-      "templateHash": "1412161719477759798"
+      "templateHash": "8620251876074951130"
     }
   },
   "parameters": {
@@ -1428,7 +1428,7 @@
         "mode": "Incremental",
         "parameters": {
           "Name": {
-            "value": "[format('{0}{1}', parameters('StorageName'), uniqueString(deployment().name))]"
+            "value": "[format('{0}{1}', parameters('StorageName'), uniqueString(parameters('StorageName')))]"
           },
           "ResourceGroup": {
             "value": "[parameters('NetworkResourceGroup')]"
